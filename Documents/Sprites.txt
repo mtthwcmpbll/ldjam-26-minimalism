@@ -1,0 +1,76 @@
+{"frames": {
+
+"Domine.png":
+{
+	"frame": {"x":2,"y":170,"w":252,"h":162},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":252,"h":162},
+	"sourceSize": {"w":256,"h":256}
+},
+"DomineBold.png":
+{
+	"frame": {"x":2,"y":2,"w":252,"h":166},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":252,"h":166},
+	"sourceSize": {"w":256,"h":256}
+},
+"tile-grass-dark.psd":
+{
+	"frame": {"x":36,"y":334,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"tile-grass-light.psd":
+{
+	"frame": {"x":2,"y":470,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"tile-mountains.psd":
+{
+	"frame": {"x":2,"y":436,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"tile-sand.psd":
+{
+	"frame": {"x":2,"y":402,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"tile-swamp.psd":
+{
+	"frame": {"x":2,"y":368,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"tile-water.psd":
+{
+	"frame": {"x":2,"y":334,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "Sprites.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":512},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:82891bc3d440ede2b3afd0baa3e1b538$"
+}
+}
