@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PuzzleController : MonoBehaviour {
 	
-	private enum SlideDirection { NONE, HORIZTONAL, VERTICAL }
+	private enum SlideDirection { NONE, HORIZONTAL, VERTICAL }
 	
 	private Puzzle currentPuzzle;
 	private FContainer puzzleContainer;
@@ -21,7 +21,8 @@ public class PuzzleController : MonoBehaviour {
 	private int currentlySlidingContainerIndex = -1;
 	
 	// Holds a complete copy of the currently-sliding row/col so we can "fake" the wrap-around as it slides
-	private FContainer cloneOfSlidingContainer = null;
+	private FContainer backCloneOfSlidingContainer = null;
+	private FContainer frontCloneOfSlidingContainer = null;
 	
 	private Vector2 lastMousePosition = Vector2.zero;
 	
@@ -42,7 +43,7 @@ public class PuzzleController : MonoBehaviour {
 		//Futile.atlasManager.LoadFont("Domine", "Domine", "Atlases/Sprites", 0.0f, 0.0f);
 		//Futile.atlasManager.LoadFont("DomineBold", "DomineBold", "Atlases/Sprites", 0.0f, 0.0f);
 		
-		currentPuzzle = PuzzleGenerator.CreateNewPuzzle(8, 8);
+		currentPuzzle = PuzzleGenerator.CreateNewPuzzle(8, 8, 3, false);
 		puzzleContainer = new FContainer();
 		
 		for (int y=0; y < currentPuzzle.Height; y++) {
@@ -68,44 +69,45 @@ public class PuzzleController : MonoBehaviour {
 				float mouseXDelta = Input.mousePosition.x - lastMousePosition.x;
 				float mouseYDelta = Input.mousePosition.y - lastMousePosition.y;
 				
-				Debug.Log("Mouse deltas: " + new Vector2(mouseXDelta, mouseYDelta));
-				
 				if (Mathf.Abs(mouseXDelta) > Mathf.Abs(mouseYDelta)) {
-					BeginRowSlide(mouseXDelta, mouseYDelta);
+					Debug.Log("Starting a horizontal slide");
+					BeginRowSlide(mouseXDelta);
 				} else if (Mathf.Abs(mouseYDelta) > Mathf.Abs(mouseXDelta)) {
 					Debug.Log("Starting a vertical slide");
-					slideDirection = SlideDirection.VERTICAL;
-					//TODO
+					BeginColumnSlide(mouseYDelta);
 				}
-			} else if (slideDirection.Equals(SlideDirection.HORIZTONAL)) {
+			} else if (slideDirection.Equals(SlideDirection.HORIZONTAL)) {
+				//continuing a horizontal slide
 				float mouseXDelta = Input.mousePosition.x - lastMousePosition.x;
 				currentlySlidingContainer.x += mouseXDelta;
-				cloneOfSlidingContainer.x += mouseXDelta;
+				backCloneOfSlidingContainer.x += mouseXDelta;
+				frontCloneOfSlidingContainer.x += mouseXDelta;
+			} else if (slideDirection.Equals(SlideDirection.VERTICAL)) {
+				//continuing a vertical slide
+				float mouseYDelta = Input.mousePosition.y - lastMousePosition.y;
+				currentlySlidingContainer.y += mouseYDelta;
+				backCloneOfSlidingContainer.y += mouseYDelta;
+				frontCloneOfSlidingContainer.y += mouseYDelta;
 			}
 		} else if (Input.GetMouseButtonUp(0) && !slideDirection.Equals(SlideDirection.NONE)) {
 			Debug.Log ("Releasing a slide");
 			
-			if (slideDirection.Equals(SlideDirection.HORIZTONAL)) {
-				//perform the actual slide on the Puzzle's Tiles model
-				float colWidth = currentPuzzle.WidthInPixels / currentPuzzle.Width;
-				int numberOfTilesSlid = Mathf.FloorToInt(currentlySlidingContainer.x / colWidth);
-				Debug.Log ("Number of tiles slid: " + numberOfTilesSlid);
-				
-				currentPuzzle.SlideRowBy(currentlySlidingContainerIndex, numberOfTilesSlid);
-				
-				//shuffle the sprites around so the row container
-				for (int col=0; col < currentPuzzle.Width; col++) {
-					Tile currTile = currentPuzzle.GetTileAt(col, currentlySlidingContainerIndex);
-					currTile.TileSprite.x = (currentPuzzle.TilePadding * (col+1)) + (Tile.TILE_SIZE_IN_PIXELS * col) + (Tile.TILE_SIZE_IN_PIXELS/2);
-				}
-				
-				currentlySlidingContainer.x = 0;
+			if (slideDirection.Equals(SlideDirection.HORIZONTAL)) {
+				Debug.Log("Completing a horizontal slide");
+				EndRowSlide();
+			} else if (slideDirection.Equals(SlideDirection.VERTICAL)) {
+				Debug.Log("Completing a vertical slide");
+				EndColumnSlide();
 			}
 			
 			//remove the old clone
-			if (null != cloneOfSlidingContainer) {
-				puzzleContainer.RemoveChild(cloneOfSlidingContainer);
-				cloneOfSlidingContainer = null;
+			if (null != backCloneOfSlidingContainer) {
+				puzzleContainer.RemoveChild(backCloneOfSlidingContainer);
+				backCloneOfSlidingContainer = null;
+			}
+			if (null != frontCloneOfSlidingContainer) {
+				puzzleContainer.RemoveChild(frontCloneOfSlidingContainer);
+				frontCloneOfSlidingContainer = null;
 			}
 			
 			currentlySlidingContainerIndex = -1;
@@ -116,9 +118,8 @@ public class PuzzleController : MonoBehaviour {
 		lastMousePosition = Input.mousePosition;
 	}
 	
-	private void BeginRowSlide(float mouseXDelta, float mouseYDelta) {
-		Debug.Log("Starting a horizontal slide");
-		slideDirection = SlideDirection.HORIZTONAL;
+	private void BeginRowSlide(float mouseXDelta) {
+		slideDirection = SlideDirection.HORIZONTAL;
 		
 		//restructure the puzzle into rows so we can slide some of theme around
 		ReorganizeIntoRows();
@@ -130,28 +131,137 @@ public class PuzzleController : MonoBehaviour {
 		Debug.Log("Starting to slide row " + currentlySlidingContainerIndex);
 		currentlySlidingContainer = slidingContainers[currentlySlidingContainerIndex];
 		
-		//make a copy of the row and stick it on the front or the end of the row to "fake" wrap-around
-		cloneOfSlidingContainer = new FContainer();
-		for (int col=0; col < currentPuzzle.Width; col++) {
-			Tile tileToCopy = currentPuzzle.GetTileAt(col, currentlySlidingContainerIndex);
-			FSprite copiedTileSprite = tileToCopy.GetSpriteRepresentation();
-			copiedTileSprite.x = tileToCopy.TileSprite.x;
-			copiedTileSprite.y = tileToCopy.TileSprite.y;
-			cloneOfSlidingContainer.AddChild(copiedTileSprite);
-		}
-		if (mouseXDelta > 0) {
-			//sliding right, put the clone on the left side of the row
-			cloneOfSlidingContainer.x = currentlySlidingContainer.x - (currentPuzzle.WidthInPixels - currentPuzzle.TilePadding);
-			cloneOfSlidingContainer.y = currentlySlidingContainer.y;
-		} else if (mouseXDelta < 0) {
-			//sliding left, put the clone on the right side of the row
-			cloneOfSlidingContainer.x = currentlySlidingContainer.x + (currentPuzzle.WidthInPixels - currentPuzzle.TilePadding);
-			cloneOfSlidingContainer.y = currentlySlidingContainer.y;
-		}
-		puzzleContainer.AddChild(cloneOfSlidingContainer);
+		//make a copy of the row and stick it on the front and the end of the row to "fake" wrap-around
+		backCloneOfSlidingContainer = CopyRowOfSprites(currentlySlidingContainerIndex);
+		frontCloneOfSlidingContainer = CopyRowOfSprites(currentlySlidingContainerIndex);
+		
+		//sliding right, put the clone on the left side of the row
+		backCloneOfSlidingContainer.x = currentlySlidingContainer.x - (currentPuzzle.WidthInPixels - currentPuzzle.TilePadding);
+		backCloneOfSlidingContainer.y = currentlySlidingContainer.y;
+
+		//sliding left, put the clone on the right side of the row
+		frontCloneOfSlidingContainer.x = currentlySlidingContainer.x + (currentPuzzle.WidthInPixels - currentPuzzle.TilePadding);
+		frontCloneOfSlidingContainer.y = currentlySlidingContainer.y;
+		
+		puzzleContainer.AddChild(backCloneOfSlidingContainer);
+		puzzleContainer.AddChild(frontCloneOfSlidingContainer);
 		
 		//actually move the row
 		currentlySlidingContainer.x += mouseXDelta;
+		backCloneOfSlidingContainer.x += mouseXDelta;
+		frontCloneOfSlidingContainer.x += mouseXDelta;
+	}
+	
+	private void EndRowSlide() {
+		//perform the actual slide on the Puzzle's Tiles model
+		float colWidth = currentPuzzle.WidthInPixels / currentPuzzle.Width;
+		int numberOfTilesSlid = Mathf.FloorToInt((currentlySlidingContainer.x + (colWidth/2)) / colWidth);
+		Debug.Log ("Number of tiles slid: " + numberOfTilesSlid);
+		
+		currentPuzzle.SlideRowBy(currentlySlidingContainerIndex, numberOfTilesSlid);
+		
+		//shuffle the sprites around so the row container
+		for (int col=0; col < currentPuzzle.Width; col++) {
+			Tile currTile = currentPuzzle.GetTileAt(col, currentlySlidingContainerIndex);
+			currTile.TileSprite.x = (currentPuzzle.TilePadding * (col+1)) + (Tile.TILE_SIZE_IN_PIXELS * col) + (Tile.TILE_SIZE_IN_PIXELS/2);
+		}
+		
+		currentlySlidingContainer.x = 0;
+	}
+	
+	private void BeginColumnSlide(float mouseYDelta) {
+		slideDirection = SlideDirection.VERTICAL;
+		
+		//restructure the puzzle into rows so we can slide some of theme around
+		ReorganizeIntoColumns();
+		
+		//figure out which column we're sliding
+		float colWidth = currentPuzzle.WidthInPixels / currentPuzzle.Width;
+		Vector2 puzzleLocalPosition = puzzleContainer.ScreenToLocal(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+		currentlySlidingContainerIndex = Mathf.FloorToInt(puzzleLocalPosition.x / colWidth);
+		Debug.Log("Starting to slide column " + currentlySlidingContainerIndex);
+		currentlySlidingContainer = slidingContainers[currentlySlidingContainerIndex];
+		
+		//make a copy of the column and stick it on the top or bottom of this column to "fake" wrap-around
+		backCloneOfSlidingContainer = CopyColumnOfSprites(currentlySlidingContainerIndex);
+		frontCloneOfSlidingContainer = CopyColumnOfSprites(currentlySlidingContainerIndex);
+		
+		//sliding up, put the clone on the bottom
+		backCloneOfSlidingContainer.x = currentlySlidingContainer.x;
+		backCloneOfSlidingContainer.y = currentlySlidingContainer.y - (currentPuzzle.HeightInPixels - currentPuzzle.TilePadding);
+		
+		//sliding down, put the clone on the top
+		frontCloneOfSlidingContainer.x = currentlySlidingContainer.x;
+		frontCloneOfSlidingContainer.y = currentlySlidingContainer.y + (currentPuzzle.HeightInPixels - currentPuzzle.TilePadding);
+		
+		puzzleContainer.AddChild(backCloneOfSlidingContainer);
+		puzzleContainer.AddChild(frontCloneOfSlidingContainer);
+		
+		//actually move the row
+		currentlySlidingContainer.y += mouseYDelta;
+	}
+	
+	private void EndColumnSlide() {
+		//perform the actual slide on the Puzzle's Tiles model
+		float rowHeight = currentPuzzle.HeightInPixels / currentPuzzle.Height;
+		int numberOfTilesSlid = Mathf.FloorToInt((currentlySlidingContainer.y + (rowHeight/2)) / rowHeight);
+		Debug.Log ("Number of tiles slid: " + numberOfTilesSlid);
+		
+		currentPuzzle.SlideColumnBy(currentlySlidingContainerIndex, numberOfTilesSlid);
+		
+		//shuffle the sprites around so the row container
+		for (int row=0; row < currentPuzzle.Height; row++) {
+			Tile currTile = currentPuzzle.GetTileAt(currentlySlidingContainerIndex, row);
+			currTile.TileSprite.y = (currentPuzzle.TilePadding * (row+1)) + (Tile.TILE_SIZE_IN_PIXELS * row) + (Tile.TILE_SIZE_IN_PIXELS/2);
+		}
+		
+		currentlySlidingContainer.y = 0;
+	}
+	
+	private FContainer CopyRowOfSprites(int row) {
+		FContainer copy = new FContainer();
+		
+		for (int col=0; col < currentPuzzle.Width; col++) {
+			Tile tileToCopy = currentPuzzle.GetTileAt(col, row);
+			FSprite copiedTileSprite = tileToCopy.GetSpriteRepresentation();
+			copiedTileSprite.x = tileToCopy.TileSprite.x;
+			copiedTileSprite.y = tileToCopy.TileSprite.y;
+			copy.AddChild(copiedTileSprite);
+		}
+		
+		return copy;
+	}
+	
+	private FContainer CopyColumnOfSprites(int col) {
+		FContainer copy = new FContainer();
+		
+		for (int row=0; row < currentPuzzle.Height; row++) {
+			Tile tileToCopy = currentPuzzle.GetTileAt(col, row);
+			FSprite copiedTileSprite = tileToCopy.GetSpriteRepresentation();
+			copiedTileSprite.x = tileToCopy.TileSprite.x;
+			copiedTileSprite.y = tileToCopy.TileSprite.y;
+			copy.AddChild(copiedTileSprite);
+		}
+		
+		return copy;
+	}
+	
+	private void ReorganizeIntoFlat() {
+		//detach any tile sprites from the sliding containers
+		foreach (FContainer container in slidingContainers) {
+			container.RemoveAllChildren();
+		}
+		slidingContainers = null;
+		
+		for (int row=0; row < currentPuzzle.Height; row++) {
+			//copy the tile FSprites into this new row container
+			for (int col=0; col < currentPuzzle.Width; col++) {
+				Tile currTile = currentPuzzle.GetTileAt(col, row);
+				
+				//add it to the flat puzzle container
+				puzzleContainer.AddChild(currTile.TileSprite);
+			}
+		}
 	}
 	
 	private void ReorganizeIntoRows() {
@@ -176,4 +286,28 @@ public class PuzzleController : MonoBehaviour {
 			puzzleContainer.AddChild(currRowContainer);
 		}
 	}
+	
+	private void ReorganizeIntoColumns() {
+		slidingContainers = new FContainer[currentPuzzle.Width];
+		
+		for (int col=0; col < currentPuzzle.Width; col++) {
+			FContainer currColContainer = new FContainer();
+			
+			//copy the tile FSprites into this new row container
+			for (int row=0; row < currentPuzzle.Height; row++) {
+				Tile currTile = currentPuzzle.GetTileAt(col, row);
+				
+				//remove this tile's sprite from the general puzzle container
+				puzzleContainer.RemoveChild(currTile.TileSprite);
+				
+				//add it to this row container
+				currColContainer.AddChild(currTile.TileSprite);
+			}
+			
+			//add the row container to the puzzle container
+			slidingContainers[col] = currColContainer;
+			puzzleContainer.AddChild(currColContainer);
+		}
+	}
+	
 }

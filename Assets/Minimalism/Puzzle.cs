@@ -9,6 +9,7 @@ public class Puzzle {
 	public int TilePadding = 4;
 	
 	public Tile[] Tiles;
+	public Tile[] Animals;
 	
 	public int WidthInPixels {
 		get {
@@ -42,6 +43,14 @@ public class Puzzle {
 		return row;
 	}
 	
+	public Tile[] GetColumn(int colIndex) {
+		Tile[] col = new Tile[Height];
+		for (int row=0; row < Height; row++) {
+			col[row] = GetTileAt(colIndex, row);
+		}
+		return col;
+	}
+	
 	public void SlideRowBy(int rowIndex, int tiles) {
 		Tile[] oldRow = GetRow(rowIndex);
 		for (int col=0; col < Width; col++) {
@@ -56,6 +65,24 @@ public class Puzzle {
 			Debug.Log ("Old position: " + oldPosition);
 			Debug.Log ("New position: " + col);
 			SetTileAt(col, rowIndex, oldRow[oldPosition]);
+		}
+	}
+	
+	// positive values slide up, negative slide down
+	public void SlideColumnBy(int colIndex, int tiles) {
+		Tile[] oldColumn = GetColumn(colIndex);
+		for (int row=0; row < Height; row++) {
+			int oldPosition = row - tiles;
+			while (oldPosition < 0) {
+				oldPosition += Height;
+			}
+			while (oldPosition >= Height) {
+				oldPosition -= Height;
+			}
+			
+			Debug.Log ("Old position: " + oldPosition);
+			Debug.Log ("New position: " + row);
+			SetTileAt(colIndex, row, oldColumn[oldPosition]);
 		}
 	}
 }
