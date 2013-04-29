@@ -16,6 +16,46 @@
 	"spriteSourceSize": {"x":1,"y":1,"w":252,"h":166},
 	"sourceSize": {"w":256,"h":256}
 },
+"camel-white.psd":
+{
+	"frame": {"x":62,"y":428,"w":28,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":5,"w":28,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"fish-white.psd":
+{
+	"frame": {"x":36,"y":368,"w":28,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":1,"w":28,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"goat-white.psd":
+{
+	"frame": {"x":36,"y":400,"w":28,"h":26},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":3,"w":28,"h":26},
+	"sourceSize": {"w":32,"h":32}
+},
+"hawk-white.psd":
+{
+	"frame": {"x":36,"y":456,"w":28,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":3,"w":28,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"horse-white.psd":
+{
+	"frame": {"x":36,"y":428,"w":24,"h":26},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":3,"w":24,"h":26},
+	"sourceSize": {"w":32,"h":32}
+},
 "tile-grass-dark.psd":
 {
 	"frame": {"x":36,"y":334,"w":32,"h":32},
@@ -71,6 +111,6 @@
 	"format": "RGBA8888",
 	"size": {"w":256,"h":512},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:82891bc3d440ede2b3afd0baa3e1b538$"
+	"smartupdate": "$TexturePacker:SmartUpdate:786feaf89ac704bf89cf92dfb14a8025$"
 }
 }

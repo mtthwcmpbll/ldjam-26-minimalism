@@ -22,7 +22,7 @@
         <key>dataFormat</key>
         <string>unity</string>
         <key>textureFileName</key>
-        <filename>Sprites.png</filename>
+        <filename>../Assets/Resources/Atlases/Sprites.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>ditherType</key>
@@ -111,7 +111,7 @@
             <enum type="AndEngine::MagFilter">MagLinear</enum>
         </struct>
         <key>dataFileName</key>
-        <filename>Sprites.txt</filename>
+        <filename>../Assets/Resources/Atlases/Sprites.txt</filename>
         <key>mainExtension</key>
         <string></string>
         <key>forceIdenticalLayout</key>
@@ -154,6 +154,12 @@
             <filename>tile-water.psd</filename>
             <filename>DomineBold.png</filename>
             <filename>Domine.png</filename>
+            <filename>fish-white.psd</filename>
+            <filename>goat-white.psd</filename>
+            <filename>hawk-white.psd</filename>
+            <filename>horse-white.psd</filename>
+            <filename>camel-white.psd</filename>
+            <filename>white.psd</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

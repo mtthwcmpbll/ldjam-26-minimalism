@@ -7,6 +7,7 @@ public class PuzzleController : MonoBehaviour {
 	
 	private Puzzle currentPuzzle;
 	private FContainer puzzleContainer;
+	private FContainer creaturesContainer;
 	
 	// This holds the slidable columns or rows (depending on which direction the user is sliding things).
 	private FContainer[] slidingContainers;
@@ -43,21 +44,38 @@ public class PuzzleController : MonoBehaviour {
 		//Futile.atlasManager.LoadFont("Domine", "Domine", "Atlases/Sprites", 0.0f, 0.0f);
 		//Futile.atlasManager.LoadFont("DomineBold", "DomineBold", "Atlases/Sprites", 0.0f, 0.0f);
 		
-		currentPuzzle = PuzzleGenerator.CreateNewPuzzle(8, 8, 3, false);
-		puzzleContainer = new FContainer();
+		currentPuzzle = PuzzleGenerator.CreateNewPuzzle(8, 8, 3, 8, false);
 		
+		//build the tile sprites
+		puzzleContainer = new FContainer();
 		for (int y=0; y < currentPuzzle.Height; y++) {
 			for (int x=0; x < currentPuzzle.Width; x++) {
-				Tile currTile = currentPuzzle.GetTileAt(x, y);
+				Tile currTile = currentPuzzle.Tiles.GetValueAt(x, y);
 				puzzleContainer.AddChild(currTile.TileSprite);
 				currTile.TileSprite.x = (currentPuzzle.TilePadding * (x+1)) + (Tile.TILE_SIZE_IN_PIXELS * x) + (Tile.TILE_SIZE_IN_PIXELS/2);
 				currTile.TileSprite.y = (currentPuzzle.TilePadding * (y+1)) + (Tile.TILE_SIZE_IN_PIXELS * y) + (Tile.TILE_SIZE_IN_PIXELS/2);
 			}
 		}
 		
+		//build the creature sprites
+		creaturesContainer = new FContainer();
+		for (int y=0; y < currentPuzzle.Height; y++) {
+			for (int x=0; x < currentPuzzle.Width; x++) {
+				Creature currCreature = currentPuzzle.Creatures.GetValueAt(x, y);
+				if (null != currCreature) {
+					creaturesContainer.AddChild(currCreature.TileSprite);
+					currCreature.TileSprite.x = (currentPuzzle.TilePadding * (x+1)) + (Tile.TILE_SIZE_IN_PIXELS * x) + (Tile.TILE_SIZE_IN_PIXELS/2);
+					currCreature.TileSprite.y = (currentPuzzle.TilePadding * (y+1)) + (Tile.TILE_SIZE_IN_PIXELS * y) + (Tile.TILE_SIZE_IN_PIXELS/2);
+				}
+			}
+		}
+		
 		puzzleContainer.x = -1 * ((float)currentPuzzle.WidthInPixels / 2.0f);
 		puzzleContainer.y = -1 * ((float)currentPuzzle.HeightInPixels / 2.0f);
+		creaturesContainer.x = puzzleContainer.x;
+		creaturesContainer.y = puzzleContainer.y;
 		Futile.stage.AddChild(puzzleContainer);
+		Futile.stage.AddChild(creaturesContainer);
 	}
 	
 	// Update is called once per frame
@@ -158,11 +176,11 @@ public class PuzzleController : MonoBehaviour {
 		int numberOfTilesSlid = Mathf.FloorToInt((currentlySlidingContainer.x + (colWidth/2)) / colWidth);
 		Debug.Log ("Number of tiles slid: " + numberOfTilesSlid);
 		
-		currentPuzzle.SlideRowBy(currentlySlidingContainerIndex, numberOfTilesSlid);
+		currentPuzzle.Tiles.SlideRowBy(currentlySlidingContainerIndex, numberOfTilesSlid);
 		
 		//shuffle the sprites around so the row container
 		for (int col=0; col < currentPuzzle.Width; col++) {
-			Tile currTile = currentPuzzle.GetTileAt(col, currentlySlidingContainerIndex);
+			Tile currTile = currentPuzzle.Tiles.GetValueAt(col, currentlySlidingContainerIndex);
 			currTile.TileSprite.x = (currentPuzzle.TilePadding * (col+1)) + (Tile.TILE_SIZE_IN_PIXELS * col) + (Tile.TILE_SIZE_IN_PIXELS/2);
 		}
 		
@@ -207,11 +225,11 @@ public class PuzzleController : MonoBehaviour {
 		int numberOfTilesSlid = Mathf.FloorToInt((currentlySlidingContainer.y + (rowHeight/2)) / rowHeight);
 		Debug.Log ("Number of tiles slid: " + numberOfTilesSlid);
 		
-		currentPuzzle.SlideColumnBy(currentlySlidingContainerIndex, numberOfTilesSlid);
+		currentPuzzle.Tiles.SlideColumnBy(currentlySlidingContainerIndex, numberOfTilesSlid);
 		
 		//shuffle the sprites around so the row container
 		for (int row=0; row < currentPuzzle.Height; row++) {
-			Tile currTile = currentPuzzle.GetTileAt(currentlySlidingContainerIndex, row);
+			Tile currTile = currentPuzzle.Tiles.GetValueAt(currentlySlidingContainerIndex, row);
 			currTile.TileSprite.y = (currentPuzzle.TilePadding * (row+1)) + (Tile.TILE_SIZE_IN_PIXELS * row) + (Tile.TILE_SIZE_IN_PIXELS/2);
 		}
 		
@@ -222,7 +240,7 @@ public class PuzzleController : MonoBehaviour {
 		FContainer copy = new FContainer();
 		
 		for (int col=0; col < currentPuzzle.Width; col++) {
-			Tile tileToCopy = currentPuzzle.GetTileAt(col, row);
+			Tile tileToCopy = currentPuzzle.Tiles.GetValueAt(col, row);
 			FSprite copiedTileSprite = tileToCopy.GetSpriteRepresentation();
 			copiedTileSprite.x = tileToCopy.TileSprite.x;
 			copiedTileSprite.y = tileToCopy.TileSprite.y;
@@ -236,7 +254,7 @@ public class PuzzleController : MonoBehaviour {
 		FContainer copy = new FContainer();
 		
 		for (int row=0; row < currentPuzzle.Height; row++) {
-			Tile tileToCopy = currentPuzzle.GetTileAt(col, row);
+			Tile tileToCopy = currentPuzzle.Tiles.GetValueAt(col, row);
 			FSprite copiedTileSprite = tileToCopy.GetSpriteRepresentation();
 			copiedTileSprite.x = tileToCopy.TileSprite.x;
 			copiedTileSprite.y = tileToCopy.TileSprite.y;
@@ -256,7 +274,7 @@ public class PuzzleController : MonoBehaviour {
 		for (int row=0; row < currentPuzzle.Height; row++) {
 			//copy the tile FSprites into this new row container
 			for (int col=0; col < currentPuzzle.Width; col++) {
-				Tile currTile = currentPuzzle.GetTileAt(col, row);
+				Tile currTile = currentPuzzle.Tiles.GetValueAt(col, row);
 				
 				//add it to the flat puzzle container
 				puzzleContainer.AddChild(currTile.TileSprite);
@@ -272,7 +290,7 @@ public class PuzzleController : MonoBehaviour {
 			
 			//copy the tile FSprites into this new row container
 			for (int col=0; col < currentPuzzle.Width; col++) {
-				Tile currTile = currentPuzzle.GetTileAt(col, row);
+				Tile currTile = currentPuzzle.Tiles.GetValueAt(col, row);
 				
 				//remove this tile's sprite from the general puzzle container
 				puzzleContainer.RemoveChild(currTile.TileSprite);
@@ -295,7 +313,7 @@ public class PuzzleController : MonoBehaviour {
 			
 			//copy the tile FSprites into this new row container
 			for (int row=0; row < currentPuzzle.Height; row++) {
-				Tile currTile = currentPuzzle.GetTileAt(col, row);
+				Tile currTile = currentPuzzle.Tiles.GetValueAt(col, row);
 				
 				//remove this tile's sprite from the general puzzle container
 				puzzleContainer.RemoveChild(currTile.TileSprite);

@@ -16,9 +16,49 @@
 	"spriteSourceSize": {"x":1,"y":1,"w":252,"h":166},
 	"sourceSize": {"w":256,"h":256}
 },
+"camel-white.psd":
+{
+	"frame": {"x":62,"y":486,"w":28,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":5,"w":28,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"fish-white.psd":
+{
+	"frame": {"x":36,"y":402,"w":28,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":1,"w":28,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"goat-white.psd":
+{
+	"frame": {"x":36,"y":434,"w":28,"h":26},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":3,"w":28,"h":26},
+	"sourceSize": {"w":32,"h":32}
+},
+"hawk-white.psd":
+{
+	"frame": {"x":62,"y":462,"w":28,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":3,"w":28,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"horse-white.psd":
+{
+	"frame": {"x":36,"y":462,"w":24,"h":26},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":3,"w":24,"h":26},
+	"sourceSize": {"w":32,"h":32}
+},
 "tile-grass-dark.psd":
 {
-	"frame": {"x":36,"y":334,"w":32,"h":32},
+	"frame": {"x":36,"y":368,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -26,7 +66,7 @@
 },
 "tile-grass-light.psd":
 {
-	"frame": {"x":2,"y":470,"w":32,"h":32},
+	"frame": {"x":36,"y":334,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -34,7 +74,7 @@
 },
 "tile-mountains.psd":
 {
-	"frame": {"x":2,"y":436,"w":32,"h":32},
+	"frame": {"x":2,"y":470,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -42,7 +82,7 @@
 },
 "tile-sand.psd":
 {
-	"frame": {"x":2,"y":402,"w":32,"h":32},
+	"frame": {"x":2,"y":436,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -50,13 +90,21 @@
 },
 "tile-swamp.psd":
 {
-	"frame": {"x":2,"y":368,"w":32,"h":32},
+	"frame": {"x":2,"y":402,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
 "tile-water.psd":
+{
+	"frame": {"x":2,"y":368,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"white.psd":
 {
 	"frame": {"x":2,"y":334,"w":32,"h":32},
 	"rotated": false,
@@ -71,6 +119,6 @@
 	"format": "RGBA8888",
 	"size": {"w":256,"h":512},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:a3c980dfdc6fdcfe8039fcd4a97fcd1b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:57d2e1607fb632016957ec8265138a9b$"
 }
 }
