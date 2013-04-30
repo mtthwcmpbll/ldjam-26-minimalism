@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Matrix<T> {
 	
@@ -25,6 +26,30 @@ public class Matrix<T> {
 	
 	public void SetValueAt(int col, int row, T val) {
 		values[(row*Height)+col] = val;
+	}
+	
+	public bool getPosition(T val, out Vector2 position) {
+		for (int row=0; row < values.Length; row++) {
+			for (int col=0; col < values.Length; col++) {
+				T currVal = GetValueAt(col, row);
+				if (null != currVal && currVal.Equals(val)) {
+					position = new Vector2(col, row);
+					return true;
+				}
+			}
+		}
+		position = new Vector2(-1.0f, -1.0f);
+		return false;
+	}
+	
+	public List<T> getValues() {
+		List<T> vals = new List<T>();
+		foreach (T v in values) {
+			if (null != v) {
+				vals.Add(v);
+			}
+		}
+		return vals;
 	}
 	
 	public T[] GetRow(int rowIndex) {

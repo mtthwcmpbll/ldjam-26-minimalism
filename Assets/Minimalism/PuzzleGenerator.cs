@@ -91,7 +91,7 @@ public class PuzzleGenerator {
 		int direction = rnd.Next(4);
 		switch (direction) {
 		case 0: //UP
-			creaturePositions = GetCreaturesInColumn(p, col);
+			creaturePositions = p.GetCreaturesInColumn(col);
 			possibleDistances = new List<int>();
 			for (int i=1; i < p.Height-1; i++) {
 				possibleDistances.Add(i);
@@ -99,7 +99,7 @@ public class PuzzleGenerator {
 			SlideColumnHelper(p, col, creaturePositions, possibleDistances, rnd);
 			break;
 		case 1: //RIGHT
-			creaturePositions = GetCreaturesInRow(p, row);
+			creaturePositions = p.GetCreaturesInRow(row);
 			possibleDistances = new List<int>();
 			for (int i=1; i < p.Width-1; i++) {
 				possibleDistances.Add(i);
@@ -107,7 +107,7 @@ public class PuzzleGenerator {
 			SlideRowHelper(p, row, creaturePositions, possibleDistances, rnd);
 			break;
 		case 2: //DOWN
-			creaturePositions = GetCreaturesInColumn(p, col);
+			creaturePositions = p.GetCreaturesInColumn(col);
 			possibleDistances = new List<int>();
 			for (int i=1; i < p.Height-1; i++) {
 				possibleDistances.Add(i * -1);
@@ -115,7 +115,7 @@ public class PuzzleGenerator {
 			SlideColumnHelper(p, col, creaturePositions, possibleDistances, rnd);
 			break;
 		case 3: //LEFT
-			creaturePositions = GetCreaturesInRow(p, row);
+			creaturePositions = p.GetCreaturesInRow(row);
 			possibleDistances = new List<int>();
 			for (int i=1; i < p.Width-1; i++) {
 				possibleDistances.Add(i * -1);
@@ -131,7 +131,9 @@ public class PuzzleGenerator {
 		int distance = possibleDistances[selectedDistance];
 		p.Tiles.SlideColumnBy(col, distance); //make the slide
 		//test that it's ok
-		while (!AreCreaturesUnsolved(p, creaturePositions)) {
+		while (!p.AreCreaturesUnsolved(creaturePositions)) {
+			Debug.Log ("Attempting distance " + distance);
+			
 			//if not, slide back
 			p.Tiles.SlideColumnBy(col, distance * -1);
 			//remove the bad position
@@ -150,7 +152,7 @@ public class PuzzleGenerator {
 		int distance = possibleDistances[selectedDistance];
 		p.Tiles.SlideRowBy(row, distance); //make the slide
 		//test that it's ok
-		while (!AreCreaturesUnsolved(p, creaturePositions)) {
+		while (!p.AreCreaturesUnsolved(creaturePositions)) {
 			//if not, slide back
 			p.Tiles.SlideRowBy(row, distance * -1);
 			//remove the bad position
@@ -163,32 +165,4 @@ public class PuzzleGenerator {
 		Debug.Log("Sliding row by " + distance);
 	}
 	
-	private static bool AreCreaturesUnsolved(Puzzle p, List<Vector2> creaturePositions) {
-		foreach (Vector2 cp in creaturePositions) {
-			if (p.Tiles.GetValueAt(cp).GroundType.Equals(p.Creatures.GetValueAt(cp).HomeGround)) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	private static List<Vector2> GetCreaturesInRow(Puzzle p, int row) {
-		List<Vector2> creaturePositions = new List<Vector2>();
-		for (int col=0; col < p.Width; col++) {
-			if (null != p.Creatures.GetValueAt(col, row)) {
-				creaturePositions.Add(new Vector2(col, row));
-			}
-		}
-		return creaturePositions;
-	}
-	
-	private static List<Vector2> GetCreaturesInColumn(Puzzle p, int col) {
-		List<Vector2> creaturePositions = new List<Vector2>();
-		for (int row=0; row < p.Height; row++) {
-			if (null != p.Creatures.GetValueAt(col, row)) {
-				creaturePositions.Add(new Vector2(col, row));
-			}
-		}
-		return creaturePositions;
-	}
 }
