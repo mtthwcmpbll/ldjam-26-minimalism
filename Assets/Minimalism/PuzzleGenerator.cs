@@ -131,7 +131,7 @@ public class PuzzleGenerator {
 		int distance = possibleDistances[selectedDistance];
 		p.Tiles.SlideColumnBy(col, distance); //make the slide
 		//test that it's ok
-		while (!p.AreCreaturesUnsolved(creaturePositions)) {
+		while (!p.AreCreaturesUnsolved(creaturePositions) && possibleDistances.Count > 0) {
 			Debug.Log ("Attempting distance " + distance);
 			
 			//if not, slide back
@@ -152,7 +152,7 @@ public class PuzzleGenerator {
 		int distance = possibleDistances[selectedDistance];
 		p.Tiles.SlideRowBy(row, distance); //make the slide
 		//test that it's ok
-		while (!p.AreCreaturesUnsolved(creaturePositions)) {
+		while (!p.AreCreaturesUnsolved(creaturePositions) && possibleDistances.Count > 0) {
 			//if not, slide back
 			p.Tiles.SlideRowBy(row, distance * -1);
 			//remove the bad position

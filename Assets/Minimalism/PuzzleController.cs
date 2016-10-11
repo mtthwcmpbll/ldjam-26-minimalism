@@ -290,6 +290,25 @@ public class PuzzleController : MonoBehaviour {
 		currentPuzzle.Tiles.SlideColumnBy(currentlySlidingContainerIndex, numberOfTilesSlid * -1);
 	}
 	
+	//DOESN'T WORK
+	private void FlashCreature(Creature c) {
+		FSprite creatureSprite = c.TileSprite;
+		FSprite flashSprite = c.GetSpriteRepresentation();
+		flashSprite.x = creatureSprite.x;
+		flashSprite.y = creatureSprite.y;
+		flashSprite.alpha = 1.0f;
+		
+		creaturesContainer.AddChild(flashSprite);
+		
+		Go.to(fadeToWhite, 0.25f,
+			new TweenConfig()
+				.floatProp("alpha", 0.0f)
+				.floatProp("scale", 2.0f)
+				.setEaseType(EaseType.SineIn)
+				.onComplete(thisTween => creaturesContainer.RemoveChild(flashSprite) ));
+		
+	}
+	
 	private void HandlePuzzleSolved() {
 		Debug.Log ("CONGRATS!  THIS PUZZLE IS SOLVED!");
 		
